@@ -1,42 +1,75 @@
 use itertools::Itertools;
 
-pub fn part1() {
-    let values = get_enumerated_values();
+pub fn run() {
+    println!("day1");
+    part1();
+    part2();
+}
 
-    let (a, b) = values
+fn part1() {
+    let values = parse_input();
+    let solution = compute_part1(values);
+    println!("    part1: {}", solution);
+}
+
+fn part2() {
+    let values = parse_input();
+    let solution = compute_part2(values);
+    println!("    part2: {}", solution);
+}
+
+fn compute_part1(values: Vec<u32>) -> u32 {
+    let enumerated: Vec<(usize, u32)> = values.iter().copied().enumerate().collect();
+
+    let (a, b) = enumerated
         .iter()
-        .cartesian_product(values.iter())
+        .cartesian_product(enumerated.iter())
         .filter(|((i, _), (j, _))| i != j)
         .map(|(&(_, a), &(_, b))| (a, b))
         .find(|(a, b)| a + b == 2020)
         .expect("didn't find any entries that sum to 2020");
 
-    println!("day1 part1: {}", a * b);
+    a * b
 }
 
-pub fn part2() {
-    let values = get_enumerated_values();
+fn compute_part2(values: Vec<u32>) -> u32 {
+    let enumerated: Vec<(usize, u32)> = values.iter().copied().enumerate().collect();
 
-    let (a, b, c) = values.iter()
-        .cartesian_product(values.iter())
-        .cartesian_product(values.iter())
+    let (a, b, c) = enumerated
+        .iter()
+        .cartesian_product(enumerated.iter())
+        .cartesian_product(enumerated.iter())
         .filter(|(((i, _), (j, _)), (k, _))| i != j && i != k && j != k)
         .map(|((&(_, a), &(_, b)), &(_, c))| (a, b, c))
         .find(|(a, b, c)| a + b + c == 2020)
         .expect("didn't find any entries that sum to 2020");
 
-    println!("day1 part2: {}", a * b * c);
+    a * b * c
 }
 
-fn get_enumerated_values() -> Vec<(usize, u32)> {
-    get_input()
+fn parse_input() -> Vec<u32> {
+    std::fs::read_to_string("inputs/day1.txt")
+        .expect("missing input file for day 1")
         .lines()
         .map(|line| line.parse::<u32>().expect("couldn't parse line into u32"))
-        .enumerate()
         .collect()
 }
 
-fn get_input() -> String {
-    std::fs::read_to_string("inputs/day1.txt")
-        .expect("missing input file for day 1")
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn part1() {
+        let values = vec![1721, 979, 366, 299, 675, 1456];
+        let solution = compute_part1(values);
+        assert_eq!(solution, 514579);
+    }
+
+    #[test]
+    fn part2() {
+        let values = vec![1721, 979, 366, 299, 675, 1456];
+        let solution = compute_part2(values);
+        assert_eq!(solution, 241861950);
+    }
 }
