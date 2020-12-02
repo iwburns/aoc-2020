@@ -1,5 +1,5 @@
-use itertools::Itertools;
 use crate::util;
+use itertools::Itertools;
 
 pub fn run() {
     println!("day1");
