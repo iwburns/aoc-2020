@@ -19,29 +19,20 @@ fn part2() {
 }
 
 fn compute_part1(values: Vec<u32>) -> u32 {
-    let enumerated: Vec<(usize, u32)> = values.iter().copied().enumerate().collect();
-
-    let (a, b) = enumerated
+    let (a, b) = values
         .iter()
-        .cartesian_product(enumerated.iter())
-        .filter(|((i, _), (j, _))| i != j)
-        .map(|(&(_, a), &(_, b))| (a, b))
-        .find(|(a, b)| a + b == 2020)
+        .tuple_combinations()
+        .find(|&(a, b)| a + b == 2020)
         .expect("didn't find any entries that sum to 2020");
 
     a * b
 }
 
 fn compute_part2(values: Vec<u32>) -> u32 {
-    let enumerated: Vec<(usize, u32)> = values.iter().copied().enumerate().collect();
-
-    let (a, b, c) = enumerated
+    let (a, b, c) = values
         .iter()
-        .cartesian_product(enumerated.iter())
-        .cartesian_product(enumerated.iter())
-        .filter(|(((i, _), (j, _)), (k, _))| i != j && i != k && j != k)
-        .map(|((&(_, a), &(_, b)), &(_, c))| (a, b, c))
-        .find(|(a, b, c)| a + b + c == 2020)
+        .tuple_combinations()
+        .find(|&(a, b, c)| a + b + c == 2020)
         .expect("didn't find any entries that sum to 2020");
 
     a * b * c
