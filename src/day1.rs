@@ -7,9 +7,8 @@ pub fn part1() {
         .iter()
         .cartesian_product(values.iter())
         .filter(|((i, _), (j, _))| i != j)
-        .map(|((_, a), (_, b))| (a, b))
-        .filter(|(a, b)| *a + *b == 2020)
-        .next()
+        .map(|(&(_, a), &(_, b))| (a, b))
+        .find(|(a, b)| a + b == 2020)
         .expect("didn't find any entries that sum to 2020");
 
     println!("day1 part1: {}", a * b);
@@ -22,9 +21,8 @@ pub fn part2() {
         .cartesian_product(values.iter())
         .cartesian_product(values.iter())
         .filter(|(((i, _), (j, _)), (k, _))| i != j && i != k && j != k)
-        .map(|(((_, a), (_, b)), (_, c))| (a, b, c))
-        .filter(|(a, b, c)| *a + *b + *c == 2020)
-        .next()
+        .map(|((&(_, a), &(_, b)), &(_, c))| (a, b, c))
+        .find(|(a, b, c)| a + b + c == 2020)
         .expect("didn't find any entries that sum to 2020");
 
     println!("day1 part2: {}", a * b * c);
