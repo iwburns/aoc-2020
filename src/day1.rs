@@ -1,4 +1,5 @@
 use itertools::Itertools;
+use crate::util;
 
 pub fn run() {
     println!("day1");
@@ -39,7 +40,7 @@ fn compute_part2(values: Vec<u32>) -> u32 {
 }
 
 fn parse_input() -> Vec<u32> {
-    std::fs::read_to_string("inputs/day1.txt")
+    util::get_input(1)
         .expect("missing input file for day 1")
         .lines()
         .map(|line| line.parse::<u32>().expect("couldn't parse line into u32"))
