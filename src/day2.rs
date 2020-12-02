@@ -33,22 +33,14 @@ fn compute_part2(entries: Vec<Entry>) -> usize {
     entries
         .iter()
         .filter(|entry| {
+            let letter = Some(entry.character);
             let left_index = entry.min - 1;
             let right_index = entry.max - 1;
 
-            let (_, left) = entry
-                .password
-                .char_indices()
-                .find(|&(i, _)| i == left_index)
-                .expect("left index out of bounds");
+            let left_match = entry.password.chars().nth(left_index) == letter;
+            let right_match = entry.password.chars().nth(right_index) == letter;
 
-            let (_, right) = entry
-                .password
-                .char_indices()
-                .find(|&(i, _)| i == right_index)
-                .expect("right index out of bounds");
-
-            (right == entry.character) ^ (left == entry.character) // ^ is xor
+            left_match ^ right_match // ^ is xor
         })
         .count()
 }
