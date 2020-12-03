@@ -1,5 +1,5 @@
 use crate::util;
-use std::convert::{TryFrom, TryInto};
+use parse_display::{Display as PDisplay, FromStr as PFromStr};
 
 pub fn run() {
     println!("day2");
@@ -45,6 +45,8 @@ fn compute_part2(entries: Vec<Entry>) -> usize {
         .count()
 }
 
+#[derive(PDisplay, PFromStr, PartialEq, Debug)]
+#[display("{min}-{max} {character}: {password}")]
 struct Entry {
     min: usize,
     max: usize,
@@ -52,78 +54,12 @@ struct Entry {
     password: String,
 }
 
-#[derive(Copy, Clone, Debug)]
-enum ParseError {
-    MissingMin,
-    MissingMax,
-    MissingMinMax,
-    MissingCharacter,
-    MissingPassword,
-    InvalidMin,
-    InvalidMax,
-}
-
-impl TryFrom<&str> for Entry {
-    type Error = ParseError;
-
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        // example input lines:
-        //
-        //     1-3 a: abcde
-        //     1-3 b: cdefg
-        //     2-9 c: ccccccccc
-        //
-        // the first example will be used below as a reference
-
-        // ["1-3", "a:", "abcde"]
-        let mut parts = value.split_ascii_whitespace().take(3);
-
-        let mut min_max = parts
-            .next() // "1-3"
-            .ok_or(ParseError::MissingMinMax)?
-            .split('-') // ["1", "3"]
-            .take(2);
-        let min = min_max
-            .next() // "1"
-            .ok_or(ParseError::MissingMin)?
-            .parse()
-            .map_err(|_| ParseError::InvalidMin)?;
-        let max = min_max
-            .next() // "3"
-            .ok_or(ParseError::MissingMax)?
-            .parse()
-            .map_err(|_| ParseError::InvalidMax)?;
-
-        let character = parts
-            .next() // "a:"
-            .ok_or(ParseError::MissingCharacter)?
-            .chars() // ["a", ":"]
-            .take(1)
-            .next()
-            .ok_or(ParseError::MissingCharacter)?;
-
-        let password = parts
-            .next() // "abcde"
-            .ok_or(ParseError::MissingPassword)?
-            .to_string();
-
-        let entry = Entry {
-            min,
-            max,
-            character,
-            password,
-        };
-
-        Ok(entry)
-    }
-}
-
 fn parse_input() -> Vec<Entry> {
     util::get_input(2)
         .expect("missing input file for day 2")
         .lines()
         .map(|line| {
-            line.try_into()
+            line.parse()
                 .expect("couldn't convert line to password entry")
         })
         .collect()
@@ -144,7 +80,7 @@ mod test {
         let entries = EXAMPLE_INPUT
             .lines()
             .map(|line| {
-                line.try_into()
+                line.parse()
                     .expect("couldn't convert line to password entry")
             })
             .collect();
@@ -158,7 +94,7 @@ mod test {
         let entries = EXAMPLE_INPUT
             .lines()
             .map(|line| {
-                line.try_into()
+                line.parse()
                     .expect("couldn't convert line to password entry")
             })
             .collect();
