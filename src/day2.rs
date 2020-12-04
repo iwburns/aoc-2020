@@ -55,8 +55,7 @@ struct Entry {
 }
 
 fn setup() -> Vec<Entry> {
-    let input = util::get_input(2)
-        .expect("missing input file for day 2");
+    let input = util::get_input(2).expect("missing input file for day 2");
 
     parse_input(&input)
 }
