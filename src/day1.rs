@@ -1,25 +1,12 @@
 use crate::util;
 use itertools::Itertools;
 
-pub fn run() {
-    println!("day1");
-    part1();
-    part2();
+pub fn setup() -> Vec<u32> {
+    let input = util::get_input(1).expect("missing input file for day 1");
+    parse_input(&input)
 }
 
-fn part1() {
-    let values = setup();
-    let solution = compute_part1(values);
-    println!("    part1: {}", solution);
-}
-
-fn part2() {
-    let values = setup();
-    let solution = compute_part2(values);
-    println!("    part2: {}", solution);
-}
-
-fn compute_part1(values: Vec<u32>) -> u32 {
+pub fn compute_part1(values: Vec<u32>) -> u32 {
     let (a, b) = values
         .iter()
         .tuple_combinations()
@@ -29,7 +16,7 @@ fn compute_part1(values: Vec<u32>) -> u32 {
     a * b
 }
 
-fn compute_part2(values: Vec<u32>) -> u32 {
+pub fn compute_part2(values: Vec<u32>) -> u32 {
     let (a, b, c) = values
         .iter()
         .tuple_combinations()
@@ -37,11 +24,6 @@ fn compute_part2(values: Vec<u32>) -> u32 {
         .expect("didn't find any entries that sum to 2020");
 
     a * b * c
-}
-
-fn setup() -> Vec<u32> {
-    let input = util::get_input(1).expect("missing input file for day 1");
-    parse_input(&input)
 }
 
 fn parse_input(input: &str) -> Vec<u32> {

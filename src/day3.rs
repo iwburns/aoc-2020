@@ -1,28 +1,15 @@
 use crate::util;
 
-pub fn run() {
-    println!("day3");
-    part1();
-    part2();
+pub fn setup() -> Grid {
+    let input = util::get_input(3).expect("missing input file for day 3");
+    parse_input(&input)
 }
 
-fn part1() {
-    let grid = setup();
-    let solution = compute_part1(grid);
-    println!("    part1: {}", solution);
-}
-
-fn part2() {
-    let grid = setup();
-    let solution = compute_part2(grid);
-    println!("    part2: {}", solution);
-}
-
-fn compute_part1(grid: Grid) -> usize {
+pub fn compute_part1(grid: Grid) -> usize {
     count_trees(&grid, (3, 1))
 }
 
-fn compute_part2(grid: Grid) -> usize {
+pub fn compute_part2(grid: Grid) -> usize {
     #[rustfmt::skip]
     let slopes = vec![
         (1, 1),
@@ -70,7 +57,7 @@ impl From<&str> for Row {
     }
 }
 
-struct Grid {
+pub struct Grid {
     rows: Vec<Row>,
 }
 
@@ -122,11 +109,6 @@ impl Iterator for GridIter {
                 slot
             })
     }
-}
-
-fn setup() -> Grid {
-    let input = util::get_input(3).expect("missing input file for day 3");
-    parse_input(&input)
 }
 
 fn parse_input(input: &str) -> Grid {

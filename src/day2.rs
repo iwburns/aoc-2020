@@ -1,25 +1,12 @@
 use crate::util;
 use parse_display::{Display as PDisplay, FromStr as PFromStr};
 
-pub fn run() {
-    println!("day2");
-    part1();
-    part2();
+pub fn setup() -> Vec<Entry> {
+    let input = util::get_input(2).expect("missing input file for day 2");
+    parse_input(&input)
 }
 
-fn part1() {
-    let values = setup();
-    let solution = compute_part1(values);
-    println!("    part1: {}", solution);
-}
-
-fn part2() {
-    let values = setup();
-    let solution = compute_part2(values);
-    println!("    part2: {}", solution);
-}
-
-fn compute_part1(entries: Vec<Entry>) -> usize {
+pub fn compute_part1(entries: Vec<Entry>) -> usize {
     entries
         .iter()
         .filter(|entry| {
@@ -29,7 +16,7 @@ fn compute_part1(entries: Vec<Entry>) -> usize {
         .count()
 }
 
-fn compute_part2(entries: Vec<Entry>) -> usize {
+pub fn compute_part2(entries: Vec<Entry>) -> usize {
     entries
         .iter()
         .filter(|entry| {
@@ -45,16 +32,11 @@ fn compute_part2(entries: Vec<Entry>) -> usize {
 
 #[derive(PDisplay, PFromStr, PartialEq, Debug)]
 #[display("{min}-{max} {character}: {password}")]
-struct Entry {
+pub struct Entry {
     min: usize,
     max: usize,
     character: char,
     password: String,
-}
-
-fn setup() -> Vec<Entry> {
-    let input = util::get_input(2).expect("missing input file for day 2");
-    parse_input(&input)
 }
 
 fn parse_input(input: &str) -> Vec<Entry> {

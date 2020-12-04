@@ -4,7 +4,6 @@ mod day3;
 mod util;
 
 fn main() {
-    day1::run();
-    day2::run();
-    day3::run();
+    build_runner!(run_days, day1, day2, day3);
+    run_days();
 }
