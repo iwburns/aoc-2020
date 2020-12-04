@@ -76,12 +76,20 @@ struct Grid {
 
 impl Grid {
     fn iter(&self, start: (usize, usize), step: (usize, usize)) -> impl Iterator<Item = Slot> {
+        let row_width = self
+            .rows
+            .get(0)
+            .expect("grid should have at least one row")
+            .slots
+            .len();
+
         GridIter {
             rows: self.rows.clone(),
             current_x: start.0,
             current_y: start.1,
             step_x: step.0,
             step_y: step.1,
+            row_width,
         }
     }
 }
@@ -92,22 +100,16 @@ struct GridIter {
     current_y: usize,
     step_x: usize,
     step_y: usize,
+    row_width: usize,
 }
 
 impl Iterator for GridIter {
     type Item = Slot;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let row_width = self
-            .rows
-            .get(0)
-            .expect("we have an empty grid?")
-            .slots
-            .len();
-
         // wrap horizontal axis as the problem describes, but
         // don't wrap the vertical axis or we'll loop forever.
-        let next_x = (self.current_x + self.step_x) % row_width;
+        let next_x = (self.current_x + self.step_x) % self.row_width;
         let next_y = self.current_y + self.step_y;
 
         self.rows
@@ -124,7 +126,6 @@ impl Iterator for GridIter {
 
 fn setup() -> Grid {
     let input = util::get_input(3).expect("missing input file for day 3");
-
     parse_input(&input)
 }
 

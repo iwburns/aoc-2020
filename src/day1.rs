@@ -41,7 +41,6 @@ fn compute_part2(values: Vec<u32>) -> u32 {
 
 fn setup() -> Vec<u32> {
     let input = util::get_input(1).expect("missing input file for day 1");
-
     parse_input(&input)
 }
 

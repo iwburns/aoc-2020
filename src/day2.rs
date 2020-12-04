@@ -34,11 +34,9 @@ fn compute_part2(entries: Vec<Entry>) -> usize {
         .iter()
         .filter(|entry| {
             let letter = Some(entry.character);
-            let left_index = entry.min - 1;
-            let right_index = entry.max - 1;
 
-            let left_match = entry.password.chars().nth(left_index) == letter;
-            let right_match = entry.password.chars().nth(right_index) == letter;
+            let left_match = entry.password.chars().nth(entry.min - 1) == letter;
+            let right_match = entry.password.chars().nth(entry.max - 1) == letter;
 
             left_match ^ right_match // ^ is xor
         })
@@ -56,7 +54,6 @@ struct Entry {
 
 fn setup() -> Vec<Entry> {
     let input = util::get_input(2).expect("missing input file for day 2");
-
     parse_input(&input)
 }
 
