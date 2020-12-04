@@ -8,13 +8,13 @@ pub fn run() {
 }
 
 fn part1() {
-    let values = parse_input();
+    let values = setup();
     let solution = compute_part1(values);
     println!("    part1: {}", solution);
 }
 
 fn part2() {
-    let values = parse_input();
+    let values = setup();
     let solution = compute_part2(values);
     println!("    part2: {}", solution);
 }
@@ -54,9 +54,15 @@ struct Entry {
     password: String,
 }
 
-fn parse_input() -> Vec<Entry> {
-    util::get_input(2)
-        .expect("missing input file for day 2")
+fn setup() -> Vec<Entry> {
+    let input = util::get_input(2)
+        .expect("missing input file for day 2");
+
+    parse_input(&input)
+}
+
+fn parse_input(input: &str) -> Vec<Entry> {
+    input
         .lines()
         .map(|line| {
             line.parse()
@@ -77,28 +83,14 @@ mod test {
 
     #[test]
     fn part1() {
-        let entries = EXAMPLE_INPUT
-            .lines()
-            .map(|line| {
-                line.parse()
-                    .expect("couldn't convert line to password entry")
-            })
-            .collect();
-
+        let entries = parse_input(EXAMPLE_INPUT);
         let solution = compute_part1(entries);
         assert_eq!(solution, 2);
     }
 
     #[test]
     fn part2() {
-        let entries = EXAMPLE_INPUT
-            .lines()
-            .map(|line| {
-                line.parse()
-                    .expect("couldn't convert line to password entry")
-            })
-            .collect();
-
+        let entries = parse_input(EXAMPLE_INPUT);
         let solution = compute_part2(entries);
         assert_eq!(solution, 1);
     }
