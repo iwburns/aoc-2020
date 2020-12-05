@@ -1,4 +1,3 @@
-use crate::util;
 use parse_display::{Display as PDisplay, FromStr as PFromStr};
 
 pub fn parse_input(input: &str) -> Vec<Entry> {

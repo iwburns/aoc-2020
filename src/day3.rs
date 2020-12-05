@@ -1,5 +1,3 @@
-use crate::util;
-
 pub fn parse_input(input: &str) -> Grid {
     let rows = input.lines().map(|line| line.into()).collect();
     Grid { rows }

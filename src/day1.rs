@@ -1,4 +1,3 @@
-use crate::util;
 use itertools::Itertools;
 
 pub fn parse_input(input: &str) -> Vec<u32> {
