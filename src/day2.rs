@@ -1,9 +1,14 @@
 use crate::util;
 use parse_display::{Display as PDisplay, FromStr as PFromStr};
 
-pub fn setup() -> Vec<Entry> {
-    let input = util::get_input(2).expect("missing input file for day 2");
-    parse_input(&input)
+pub fn parse_input(input: &str) -> Vec<Entry> {
+    input
+        .lines()
+        .map(|line| {
+            line.parse()
+                .expect("couldn't convert line to password entry")
+        })
+        .collect()
 }
 
 pub fn compute_part1(entries: Vec<Entry>) -> usize {
@@ -37,16 +42,6 @@ pub struct Entry {
     max: usize,
     character: char,
     password: String,
-}
-
-fn parse_input(input: &str) -> Vec<Entry> {
-    input
-        .lines()
-        .map(|line| {
-            line.parse()
-                .expect("couldn't convert line to password entry")
-        })
-        .collect()
 }
 
 #[cfg(test)]

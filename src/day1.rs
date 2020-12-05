@@ -1,9 +1,11 @@
 use crate::util;
 use itertools::Itertools;
 
-pub fn setup() -> Vec<u32> {
-    let input = util::get_input(1).expect("missing input file for day 1");
-    parse_input(&input)
+pub fn parse_input(input: &str) -> Vec<u32> {
+    input
+        .lines()
+        .map(|line| line.parse::<u32>().expect("couldn't parse line into u32"))
+        .collect()
 }
 
 pub fn compute_part1(values: Vec<u32>) -> u32 {
@@ -24,13 +26,6 @@ pub fn compute_part2(values: Vec<u32>) -> u32 {
         .expect("didn't find any entries that sum to 2020");
 
     a * b * c
-}
-
-fn parse_input(input: &str) -> Vec<u32> {
-    input
-        .lines()
-        .map(|line| line.parse::<u32>().expect("couldn't parse line into u32"))
-        .collect()
 }
 
 #[cfg(test)]

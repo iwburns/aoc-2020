@@ -1,8 +1,8 @@
 use crate::util;
 
-pub fn setup() -> Grid {
-    let input = util::get_input(3).expect("missing input file for day 3");
-    parse_input(&input)
+pub fn parse_input(input: &str) -> Grid {
+    let rows = input.lines().map(|line| line.into()).collect();
+    Grid { rows }
 }
 
 pub fn compute_part1(grid: Grid) -> usize {
@@ -109,11 +109,6 @@ impl Iterator for GridIter {
                 slot
             })
     }
-}
-
-fn parse_input(input: &str) -> Grid {
-    let rows = input.lines().map(|line| line.into()).collect();
-    Grid { rows }
 }
 
 #[cfg(test)]
