@@ -1,13 +1,9 @@
-use crate::util;
 use itertools::Itertools;
-use std::str::Lines;
 use regex::Regex;
+use std::str::Lines;
 
 pub fn parse_input(input: &str) -> Vec<String> {
-    input
-        .lines()
-        .batching(|iter| get_next_group(iter))
-        .collect()
+    input.lines().batching(get_next_group).collect()
 }
 
 fn get_next_group(lines: &mut Lines) -> Option<String> {
@@ -27,120 +23,71 @@ fn get_next_group(lines: &mut Lines) -> Option<String> {
 pub fn compute_part1(passports: Vec<String>) -> usize {
     passports
         .iter()
-        .map(|s| Passport::from(s.as_str()))
         .filter(|p| {
-            p.byr.is_some()
-                && p.iyr.is_some()
-                && p.eyr.is_some()
-                && p.hgt.is_some()
-                && p.hcl.is_some()
-                && p.ecl.is_some()
-                && p.pid.is_some()
+            p.contains("byr")
+                && p.contains("iyr")
+                && p.contains("eyr")
+                && p.contains("hgt")
+                && p.contains("hcl")
+                && p.contains("ecl")
+                && p.contains("pid")
         })
         .count()
 }
 
 pub fn compute_part2(passports: Vec<String>) -> usize {
-    let hair = Regex::new("^#([0-9a-f]){6}$").unwrap();
-    let eye = Regex::new("^(amb|blu|brn|gry|grn|hzl|oth)$").unwrap();
-    let passport_id = Regex::new("^\\d{9}$").unwrap();
+    let match_byr = Regex::new(r"byr:(\d{4})\b").unwrap();
+    let match_iyr = Regex::new(r"iyr:(\d{4})\b").unwrap();
+    let match_eyr = Regex::new(r"eyr:(\d{4})\b").unwrap();
+
+    let match_hgt_in = Regex::new(r"hgt:(\d+?)in\b").unwrap();
+    let match_hgt_cm = Regex::new(r"hgt:(\d+?)cm\b").unwrap();
+
+    let match_hcl = Regex::new(r"hcl:#[0-9a-f]{6}\b").unwrap();
+    let match_ecl = Regex::new(r"ecl:(amb|blu|brn|gry|grn|hzl|oth)\b").unwrap();
+    let match_pid = Regex::new(r"pid:\d{9}\b").unwrap();
 
     passports
         .iter()
-        .map(|s| Passport::from(s.as_str()))
-        .filter(|p| {
-            p.byr
-                .and_then(|byr| match byr >= 1920 && byr <= 2002 {
-                    true => Some(()),
-                    false => None,
-                })
-                .and(p.iyr.and_then(|iyr| match iyr >= 2010 && iyr <= 2020 {
-                    true => Some(()),
-                    false => None,
-                }))
-                .and(p.eyr.and_then(|eyr| match eyr >= 2020 && eyr <= 2030 {
-                    true => Some(()),
-                    false => None,
-                }))
-                .and(p.hgt.and_then(|hgt| match hgt {
-                    Height::In(i) if i >= 59 && i <= 76 => Some(()),
-                    Height::Cm(c) if c >= 150 && c <= 193 => Some(()),
-                    _ => None,
-                }))
-                .and(p.hcl.and_then(|hcl| match hair.is_match(hcl) {
-                    true => Some(()),
-                    false => None,
-                }))
-                .and(p.ecl.and_then(|ecl| match eye.is_match(ecl) {
-                    true => Some(()),
-                    false => None,
-                }))
-                .and(p.pid.and_then(|pid| match passport_id.is_match(pid) {
-                    true => Some(()),
-                    false => None,
-                }))
-                .is_some()
+        .filter_map(|p| {
+            let byr = match_byr
+                .captures(p)
+                .and_then(|caps| caps[1].parse().ok())?;
+            let iyr = match_iyr
+                .captures(p)
+                .and_then(|caps| caps[1].parse().ok())?;
+            let eyr = match_eyr
+                .captures(p)
+                .and_then(|caps| caps[1].parse().ok())?;
+
+            let hgt_in = match_hgt_in
+                .captures(p)
+                .and_then(|caps| caps[1].parse().ok());
+            let hgt_cm = match_hgt_cm
+                .captures(p)
+                .and_then(|caps| caps[1].parse().ok());
+
+            let hcl_found = match_hcl.is_match(p);
+            let ecl_found = match_ecl.is_match(p);
+            let pid_found = match_pid.is_match(p);
+
+            match is_valid(byr, iyr, eyr, hgt_in, hgt_cm) && hcl_found && ecl_found && pid_found {
+                true => Some(()),
+                false => None,
+            }
         })
         .count()
 }
 
-#[derive(Debug)]
-struct Passport<'a> {
-    byr: Option<u32>,
-    iyr: Option<u32>,
-    eyr: Option<u32>,
-    hgt: Option<Height>,
-    hcl: Option<&'a str>,
-    ecl: Option<&'a str>,
-    pid: Option<&'a str>,
-}
+fn is_valid(byr: u32, iyr: u32, eyr: u32, hgt_in: Option<u32>, hgt_cm: Option<u32>) -> bool {
+    let in_valid = hgt_in.map(|i| i >= 59 && i <= 76);
+    let cm_valid = hgt_cm.map(|c| c >= 150 && c <= 193);
+    let height_valid = in_valid.or(cm_valid).unwrap_or(false);
 
-impl<'a> From<&'a str> for Passport<'a> {
-    fn from(input: &'a str) -> Self {
-        let parts = input.split_whitespace();
-
-        let find = |target: &'a str| -> Option<&'a str> {
-            parts.clone().find_map(|s| match s.starts_with(target) {
-                true => s.split(':').nth(1),
-                false => None,
-            })
-        };
-
-        Passport {
-            byr: find("byr").and_then(|value| value.parse().ok()),
-            iyr: find("iyr").and_then(|value| value.parse().ok()),
-            eyr: find("eyr").and_then(|value| value.parse().ok()),
-            hgt: find("hgt").map(|value| value.into()),
-            hcl: find("hcl"),
-            ecl: find("ecl"),
-            pid: find("pid"),
-        }
-    }
-}
-
-#[derive(Debug, Copy, Clone)]
-enum Height {
-    In(u32),
-    Cm(u32),
-}
-
-impl From<&str> for Height {
-    fn from(input: &str) -> Self {
-        match input.ends_with("in") {
-            true => Height::In(
-                input
-                    .trim_end_matches("in")
-                    .parse()
-                    .expect("invalid height inches"),
-            ),
-            false => Height::Cm(
-                input
-                    .trim_end_matches("cm")
-                    .parse()
-                    .expect("invalid height centimeters"),
-            ),
-        }
-    }
+    (byr >= 1920 && byr <= 2002)
+        && (iyr >= 2010 && iyr <= 2020)
+        && (eyr >= 2020 && eyr <= 2030)
+        && height_valid
 }
 
 #[cfg(test)]
