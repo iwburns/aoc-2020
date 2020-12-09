@@ -22,9 +22,7 @@ fn get_next_group(lines: &mut Lines) -> Option<Group> {
 pub fn compute_part1(groups: Vec<Group>) -> usize {
     groups
         .iter()
-        .map(|group| {
-            get_unique_answers_for_group(group).len()
-        })
+        .map(|group| get_unique_answers_for_group(group).len())
         .sum()
 }
 
@@ -36,9 +34,7 @@ pub fn compute_part2(groups: Vec<Group>) -> usize {
 
             let all_answered_by_whole_group = unique_answers
                 .iter()
-                .filter(|&c| {
-                    all_in_group_answered_yes(group, *c)
-                })
+                .filter(|&c| all_in_group_answered_yes(group, *c))
                 .count();
 
             all_answered_by_whole_group
